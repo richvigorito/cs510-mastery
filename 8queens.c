@@ -73,8 +73,6 @@ void print_solutions(n){
   					printf(" .");
 			}
   			printf(" |\n");
-  			//printf(" %d, ",solutions[i][j]);
-  			//printf("\n");
 		}
   	
 		// file header, ie A->H	
@@ -133,7 +131,7 @@ void queens(int r,int n){
 	iterations++;
 }
 
-void main(){
+int main(){
   int n;
 
   // solution is n-queens. allow user to select dimensions via 	 
@@ -143,4 +141,5 @@ void main(){
   queens(1,n);
 
   print_solutions(n);
+  return 0;
 }

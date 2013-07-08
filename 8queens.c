@@ -84,8 +84,12 @@ void print_solutions(n){
 
   		printf("\n");
 	}
+  	printf("Iterations via Brute-force: %d \n",(int)pow(n,n));
   	printf("Iterations via backtracking: %d \n",iterations);
   	printf("Successful positions: %d \n",solution_cnt);
+
+  	printf("\nRecursion reduced iterations by: %d \n", (int)pow(n,n) - iterations);
+
 }
 
 

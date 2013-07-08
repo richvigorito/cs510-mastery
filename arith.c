@@ -1,75 +1,97 @@
+
+/********************************************************************
+                Recursive Arithmetic Functions
+
+                                                 Rich Vigorito
+                                 CS510  Mastery in Programming  
+                                                     7/8/2013                          
+*********************************************************************
+
+With only the unary minus, the auto-increment operator ++, and the 
+auto-decrement operator -- recreate the following integer operations:
+
+additions, subtractions, multiplication, division, exponentiation. 
+                
+Additionally created a modulus operator function for use in the exponent 
+function. This is tested, however not in the display of the program. 
+
+to compile:
+shell> gcc arith.c -lm
+
+*********************************************************************/
+
 #include <stdio.h>
 #include <math.h>
 
 int modulo(int a, int b){ 
 //modulo(a,b) = a/b, ie a = divident, b = divisor
 
-	if (0 == b) {
+	if (0 == b) {				// a%0 is divide by zero error, return 0
 		printf("Zero Divide\n");
 		return 0;
 	}	
-	else if (a < 0 && b < 0)
-		return -modulo(-a,-b);
-	else if (a < 0)
+	else if (1 == b)			// a % 1 = 0
+		return 0;
+	else if (a < 0 && b < 0) 		// -a % -b = -(a%b)
+		return -modulo(a,b);
+	else if (a < 0)				// -a % b = -(a % b)
 		return -modulo(-a,b);
-	else if (b < 0)
+	else if (b < 0)				// a % -b = -(a % b)
 		return modulo(a,-b);
-	else if (a == b)
+	else if (a == b)			// a % a =  b % b = 0
 		return 0;
-	else if (1 == b)
-		return 0;
-	else if (a < b)
+	else if (a < b)				// a % b, b doesnt divide into a at all. return a. 
 		return a;
 	else 
-		return modulo(sub(a,b),b);
+		return modulo(sub(a,b),b);	// a % b = (a-b) % b ... subracting b from a until b 1 or a
 }
 
+int expo(int a, int b){
+// expo(a,b) ==  a ^ b
+
+	if (-1 == a)					// -1 ^ b = 1 where b is an even number,  1 ^ b = -1 where b is an odd number,
+		return (modulo(b,2)) ? -1 : 1;
+	else if (0 == b)				//  a ^ 0 = 1
+		return 1;
+	else if (1 == a) 				// 1 ^ b = 1
+		return 1;
+	else if (0 == a)  				// 0 ^ b = 0
+		return 0;
+	else if (0 > b) 				// if b < 0, then less than 0, ie in integer arithematic return 0
+		return 0;
+	else 						// a^b = a * (a^b--)  = a * a * (a^b--) , until b = 1
+		return mult(expo(a,--b),a);
+}
 
 int div(int a, int b){ 
 //div(a,b) = a/b, ie a = divident, b = divisor
 
 	int q = 0 ; // quotient
 
-	if (b == 1)
+	if (b == 1)		  			// a/1 = 1
 		return a;
 
-	else if (0 == b) {
+	else if (0 == b) {				// a/0 = divide by zero error, return 0
 		printf("Zero Divide\n");
 		return 0;
 	}
 
-	else if (a < 0 && b < 0)
+	else if (a < 0 && b < 0) 			// -a / -b = a/b
 		return div(-a,-b);
-	else if (a < 0)
-		return -div(-a,b);
-	else if (b < 0)
-		return -div(a,-b);
-	else if (b == a)
+	else if (a < 0) 				// -a/b = -(a/b)
+		return -div(-a,b);                     	
+	else if (b < 0)					// a/-b = -(a/b)
+		return -div(a,-b);		
+	else if (b == a)				// a/a = b/b = 1
 		return 1;
-	else if (a < b)
+	else if (a < b)					// in integer division IF a is less than b nd 0 < a < b than result is less than 1, ie 0
 		return 0;
 	else {
-		q = add(++q,div(sub(a,b),b));
-		return q;
+		q = add(++q,div(sub(a,b),b));          	//  count how many times we can subtract b from a. return that number, ie quotient
+		return q;				//  ie 1 + ((a-b)/b) = 1 + 1 + ((a-b)/b) ... until b = 1... than add up all the 1's
 	}
 }
 
-int expo(int a, int b){
-// expo(a,b) ==  a ^ b
-
-	if (-1 == a)
-		return (modulo(b,2)) ? -1 : 1;
-	else if (0 == b) 
-		return 1;
-	else if (1 == a)  
-		return 1;
-	else if (0 == a)  
-		return 0;
-	else if (0 > b)
-		return 0;
-	else 
-		return mult(expo(a,--b),a);
-}
 
 int mult(int a, int b){
 // mult(a,b) == a*b
@@ -87,7 +109,7 @@ int mult(int a, int b){
 	else if (b < 0)				// a*-b = -(a*b)
 		return -mult(a,-b);
 	else 
-		return add(mult(a,--b),a);     // 
+		return add(mult(a,--b),a);     // a*b = a + (a*(b-1)), decrementing b  SO LONG AS long  b > 1 , ie add a to itself b times
 
 }
 

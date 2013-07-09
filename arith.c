@@ -43,7 +43,7 @@ int modulo(int a, int b){
 	else if (a < b)				// a % b, b doesnt divide into a at all. return a. 
 		return a;
 	else 
-		return modulo(sub(a,b),b);	// a % b = (a-b) % b ... subracting b from a until b 1 or a
+		return modulo(sub(a,b),b);	// a % b = (a-b) % b ... subracting b from a until a <= b
 }
 
 int expo(int a, int b){
@@ -130,6 +130,7 @@ int add(int a, int b){
 }
 
 void test_expo(int lower,int upper){
+// test expo  function
 	int a,b,c;	
 	printf("Power: %d..%d ** %d..%d\n", lower,upper,lower,upper);
  	for (a = lower; a <= upper; a++){
@@ -146,6 +147,7 @@ void test_expo(int lower,int upper){
 }
 
 void test_modulo(int lower,int upper){
+// test modulus  function
 	int a,b,c;	
 	printf("Modulus: %d..%d %% %d..%d\n", lower,upper,lower,upper);
  	for (a = lower; a <= upper; a++){
@@ -162,6 +164,7 @@ void test_modulo(int lower,int upper){
 }
 
 void test_div(int lower,int upper){
+// test div func
 	int a,b,c;	
 	printf("Division: %d..%d / %d..%d\n", lower,upper,lower,upper);
  	for (a = lower; a <= upper; a++){
@@ -178,6 +181,7 @@ void test_div(int lower,int upper){
 }
 
 void test_mult(int lower,int upper){
+// test mult func
 	int a,b,c;	
 	printf("Multiplication: %d..%d * %d..%d\n", lower,upper,lower,upper);
  	for (a = lower; a <= upper; a++){
@@ -192,6 +196,7 @@ void test_mult(int lower,int upper){
 }
 
 void test_sub(int lower,int upper){
+// test sub func
 	int a,b,c;	
 	int failed = 0;
 	printf("Subtraction: %d..%d - %d..%d\n", lower,upper,lower,upper);
@@ -207,6 +212,7 @@ void test_sub(int lower,int upper){
 }
 
 void test_add(int lower,int upper){
+// test add func
 	int a,b,c;	
 	printf("Addition: %d..%d + %d..%d \n", lower,upper,lower,upper);
  	for (a = lower; a <= upper; a++){

@@ -1,3 +1,45 @@
+/********************************************************************
+                Symbolic Differentiation
+
+                                                 Rich Vigorito
+                                 CS510  Mastery in Programming  
+                                                     7/30/2013
+                                                          HW 4                          
+*********************************************************************
+
+Create a parser to take a function, simplify it if possible, take the 
+first the derivative and simplify that. 
+
+First Derivatives: 
+derive( x )      = 1
+derive( a )      = 0	-- any single character variable ‘a’ except ‘x’ or ‘X’
+derive( number ) = 0	-- with ‘number” being a single-digit decimal literal
+derive( u + v )  = u' + v' 	-- where u = f2(x) and v = f3(x)
+derive( u - v )  = u' - v'
+derive( u * v )  = u' * v + u * v'
+derive( u / v )  = ( u' * v - u * v' ) / ( v * v)
+derive( u ^ v )  = u' * v * u ^ ( v - 1 ) + & u * v' * u ^ v
+derive( & u )    = u' / u	-- the & operator stands for ln, the natural log
+
+Simplifications:
+#	Possible First derivative	Simplified
+1	0 + u(x)	u(x)
+2	u(x) + 0	u(x)
+3	u(x) – 0	u(x)
+4	u(x) – u(x)	0
+5	0 * u(x)	0
+6	u(x) * 0	0
+7	1 * u(x)	u(x)
+8	u(x) * 1	u(x)
+9	u(x) / u(x)	1
+10	u(x) / 1	u(x)
+11	u(x) ^ 1	u(x)
+12	u(x) ^ 0	1
+13	& 1	0
+
+                        
+*********************************************************************/
+
 #include <stdio.h>
 #include <string>
 #include <sstream>

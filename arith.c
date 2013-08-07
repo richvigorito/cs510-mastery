@@ -132,7 +132,7 @@ int add(int a, int b){
 void test_expo(int lower,int upper){
 // test expo  function
 	int a,b,c;	
-	printf("Power: %d..%d ** %d..%d\n", lower,upper,lower,upper);
+	printf("Power %d..%d ** %d..%d\n", lower,upper,lower,upper);
  	for (a = lower; a <= upper; a++){
  		for (b = lower; b <= upper; b++){
 			c = expo(a,b);
@@ -149,7 +149,7 @@ void test_expo(int lower,int upper){
 void test_modulo(int lower,int upper){
 // test modulus  function
 	int a,b,c;	
-	printf("Modulus: %d..%d %% %d..%d\n", lower,upper,lower,upper);
+	printf("Modulus %d..%d %% %d..%d\n", lower,upper,lower,upper);
  	for (a = lower; a <= upper; a++){
  		for (b = lower; b <= upper; b++){
 			if(0 == b)
@@ -166,7 +166,7 @@ void test_modulo(int lower,int upper){
 void test_div(int lower,int upper){
 // test div func
 	int a,b,c;	
-	printf("Division: %d..%d / %d..%d\n", lower,upper,lower,upper);
+	printf("Division %d..%d / %d..%d\n", lower,upper,lower,upper);
  	for (a = lower; a <= upper; a++){
  		for (b = lower; b <= upper; b++){
 			c = div(a,b);
@@ -183,7 +183,7 @@ void test_div(int lower,int upper){
 void test_mult(int lower,int upper){
 // test mult func
 	int a,b,c;	
-	printf("Multiplication: %d..%d * %d..%d\n", lower,upper,lower,upper);
+	printf("Multiplication %d..%d * %d..%d\n", lower,upper,lower,upper);
  	for (a = lower; a <= upper; a++){
  		for (b = lower; b <= upper; b++){
 			c = mult(a,b);
@@ -199,7 +199,7 @@ void test_sub(int lower,int upper){
 // test sub func
 	int a,b,c;	
 	int failed = 0;
-	printf("Subtraction: %d..%d - %d..%d\n", lower,upper,lower,upper);
+	printf("Subtraction %d..%d - %d..%d\n", lower,upper,lower,upper);
  	for (a = lower; a <= upper; a++){
  		for (b = lower; b <= upper; b++){
 			c = sub(a,b);
@@ -214,7 +214,7 @@ void test_sub(int lower,int upper){
 void test_add(int lower,int upper){
 // test add func
 	int a,b,c;	
-	printf("Addition: %d..%d + %d..%d \n", lower,upper,lower,upper);
+	printf("Addition %d..%d + %d..%d \n", lower,upper,lower,upper);
  	for (a = lower; a <= upper; a++){
  		for (b = lower; b <= upper; b++){
 			c = add(a,b);

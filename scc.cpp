@@ -53,7 +53,7 @@ typedef struct link_tp * link_ptr_tp;	// forward ref
 typedef struct node_tp * node_ptr_tp;	
 node_ptr_tp make_node( int name );
 
-node_ptr_tp finger = make_node(-9999999);
+node_ptr_tp finger = make_node(-9999999); // set finger's name to  -9999999
 
 typedef struct link_tp
 {
@@ -199,7 +199,11 @@ void pop()
 	scc_stack 		= scc_stack->scc_pred;
 } //end pop
 
-void scc( node_ptr_tp v )
+
+std::ostringstream scc_str ;
+std::ostringstream scc_singleton_str ;
+
+void scc( node_ptr_tp v , bool print_singletons = false)
 { // scc
 	node_ptr_tp w;
 
@@ -211,7 +215,7 @@ void scc( node_ptr_tp v )
 			w = link->next_node;
 //			ASSERT( w, “node w linked as successor must be /= 0" );
 			if ( ! w->number ) {		// alias for “->visited”
-				scc( w );
+				scc( w, print_singletons);
 				v->lowlink = min( v->lowlink, w->lowlink );
 			} else if ( w->number < v->number ) {
 				// frond, AKA “cross link”
@@ -227,19 +231,22 @@ void scc( node_ptr_tp v )
 			// found next scc; but if singleton node SCC, then skip it
 			if ( scc_stack == v ) {
 				// yes, singleton node; so be silent! Uninteresting!
+				if(scc_stack->name != -9999999)
+					scc_singleton_str << "--singleton node: " << scc_stack->name <<  endl;
 				pop();
 			} else {
 				// multi-node scc; THAT we do consider
 				scc_count++;
-				cout << "next scc number is: " << scc_count << endl;
+				scc_str << "--scc node number: " << scc_count << endl;
+				scc_singleton_str << "--scc node number: " << scc_count << endl;
 				while( scc_stack && ( scc_stack->number >= v->number ) ) {
-					cout << "node " << scc_stack->name << " is in." << endl;
+					scc_str << "----node " << scc_stack->name << " is in scc node " << scc_count << endl;
+					scc_singleton_str << "----node " << scc_stack->name << " is in scc node " << scc_count <<  endl;
 					pop();
 				} //end while
 			} //end if
 	} //end if
 } //end scc
-
 
 int main()
 {
@@ -249,5 +256,10 @@ int main()
 		if( ! w->visited )	
 			scc(w);
 	} while ( w = w->finger );	
+		
+
+	cout << "All SCCs including singleton nodes:" << endl << scc_singleton_str.str() << endl;
+	cout << "Multi-node SCC's: " << endl << scc_str.str() << endl;
+
   	return 0;
 }

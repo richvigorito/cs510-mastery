@@ -79,6 +79,17 @@ unsigned find_1_field(unsigned row, unsigned col){
 	}
 }
 
+int get_empty_count(){
+	int cnt = 0;
+	for ( int row = 0; row < SMALL_N; row++ ) {
+		for ( int col = 0; col < SMALL_N; col++ ) {
+			if(!sudoku[ row ][ col ].field)
+				cnt++;
+		}			
+	}
+	return cnt;
+}
+
 bool sanity_check(){
 	for ( int row = 0; row < SMALL_N; row++ ) {
 		for ( int col = 0; col < SMALL_N; col++ ) {
@@ -237,8 +248,6 @@ void set_board(struct_board_tp &square,unsigned field){
 		else 
 			square.can_be[j]  = TRUE;
 	}
-
-	
 }
 
 void parse_line(unsigned row,char * str){
@@ -329,20 +338,33 @@ void print_board(){
 		}
 	}
 
-	std::cout << board_str.str() << div << std::endl << std::endl;
+	std::cout << board_str.str() << div << std::endl;
+	std::cout << std::endl;
 }
 
 
 int main()
 {
 	init_board();
-	print_board();
 
 	read_board();
+	std::cout << "Initial, incomplete input field:" << std::endl;
 	print_board();
+	int cnt = get_empty_count(); 
+	
+	std::cout << "Statistics initially:" << std::endl;
+	std::cout << "Total # of fields: 81" << std::endl;
+	std::cout << "Fields filled: " << 81-cnt << std::endl;
+	std::cout << "Fields Empty: " << cnt << std::endl << std::endl;
 
 	sudoku_level1();
+	std::cout << "Sudoku level 0 sudoku board " << std::endl;
 	print_board();
+	if(sanity_check){
+		std::cout << "Fields was solvable with level 0. " << std::endl;
+	} else {
+		std::cout << "Fields wasnt solvable with level 0. " << std::endl;
+	}
   	return 0;
 }
 

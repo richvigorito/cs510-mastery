@@ -30,6 +30,7 @@ to run:      /> a.out < graph-input-file.txt
 
 #include <stdio.h>
 #include <string>
+#include <cstring>
 #include <sstream>
 #include <ctype.h>
 #include <stdlib.h>
@@ -72,6 +73,7 @@ typedef struct board_tp
 
 struct_board_tp sudoku[ SMALL_N ][ SMALL_N ];
 
+void print_board();
 
 unsigned i(unsigned block){ 
 // returns the start index of an individual block in a row from the input file
@@ -122,10 +124,37 @@ int get_empty_count(){
 	return cnt;
 }
 
-
-int sanity_check(){
+int valid_move(int row,int col,int set_field){
 // checks to see that all are set, ie have values
-	
+
+	// determine numbers hasnt already set in row
+	for ( int c = 0,i=1; c < SMALL_N; c++,i++ ) {
+		if (set_field == sudoku[row][c].field){
+			return 0;
+		}
+		
+	}
+
+	// determine numbers hasnt already set in col
+	for ( int r = 0,i=1; r < SMALL_N; r++,i++ ) {
+		if (set_field == sudoku[r][col].field)
+			return 0;
+	}
+
+	for ( int i = f( row ); i < ( f( row ) + TINY_N ); i++ ) {
+		ASSERT( ( i <= row+SMALL_N ), i,"wrong i_row in [][]" );
+		for ( int j = f( col ); j < ( f( col ) + TINY_N ); j++ ) {
+			ASSERT( (j <= col+SMALL_N),i, "wrong j_col in [][]" );
+			if (set_field == sudoku[i][j].field)
+				return 0;
+		}
+	}
+
+	return 1;
+}
+
+
+int is_board_filled(){
 	// all fields must be set	
 	for ( int row = 0; row < SMALL_N; row++ ) {
 		for ( int col = 0; col < SMALL_N; col++ ) {
@@ -133,6 +162,14 @@ int sanity_check(){
 				return 0;
 		}			
 	}
+	return 1;
+}
+
+int sanity_check(){
+// checks to see that all are set, ie have values
+
+	if (!is_board_filled())	return 0;
+
 	
 	int sum = 0	;
 	
@@ -148,88 +185,48 @@ int sanity_check(){
 		}
 	}
 	
-	return 1;
-/*
 	for ( int col = 0; col < SMALL_N; col++ ) {
+		sum = 0;
 		for ( int row = 0; row < SMALL_N; row++ ) {
 			sum += sudoku[row][col].field;
+		}
+		if (sum != 45){
+			std::cout << "col" << col+1 << ": " << sum << std::endl ;
+	  		return 0;
+		}
+	}
+
+	// all subsquare must have all numbers
+	for ( int row = 0; row < SMALL_N; row++ ) {
+		for ( int col = 0; col < SMALL_N; col++ ) {
+			sum = 0;
+			for ( int i = f( row ); i < ( f( row ) + TINY_N ); i++ ) {
+			ASSERT( ( i <= row+SMALL_N ), i,"wrong i_row in [][]" );
+				for ( int j = f( col ); j < ( f( col ) + TINY_N ); j++ ) {
+					ASSERT( (j <= col+SMALL_N),i, "wrong j_col in [][]" );
+					sum += sudoku[i][j].field;
+				}
+			}
 			if (sum != 45){
-				std::cout << "col" <<col+1 << ": " << sum << std::endl ;
+				std::cout << "col" << col+1 << ": " << sum << std::endl ;
 	  			return 0;
 			}
 		}
 	}
 
-	
 	return 1;
-/*v
-	unsigned numbers[] = {0, 0,0,0, 0,0,0, 0,0,0}; //numbers that must be set (use index 1-10 )
-
-
-	int sum = 0	;
-	// all rows must have all numbers
-	for ( int row = 0; row < SMALL_N; row++ ) {
-		sum = 0;
-		for ( int col = 0,i=1; col < SMALL_N; col++,i++ ) {
-			sum += sudoku[row][col].field;
-		}
-		std::cout << row+1 << ": " << sum << std::endl ;
-		if (sum != 45)  	return 0;
-	}
-	std::cout  << std::endl ;
-	return 1;
-	
-
-	// all rows must have all numbers
-	for ( int row = 0; row < SMALL_N; row++ ) {
-		numbers[10] = 0; 
-		for ( int col = 0,i=1; col < SMALL_N; col++,i++ ) {
-			if (numbers[i] == 1) // we've already set 
-				return 0;
-			else 
-				numbers[sudoku[row][col].field] = 1; // dictact that we've this row has this field already 
-		}
-	}	
-	
-	return 1;
-	
-
-	// all cols must have all numbers
-	for ( int col = 0; col < SMALL_N; col++ ) {
-		for ( int row = 1; row <= SMALL_N; row++ ) {
-			if (numbers[row] == 1) // we've already set 
-				return 0;
-			else 
-				numbers[sudoku[row-1][col].field] = 1; // dictact that we've this row has this field already 
-		}
-	}
-
-
-	// all subsquare must have all numbers
-
-	for ( int row = 0; row < SMALL_N; row++ ) {
-		for ( int col = 0; col < SMALL_N; col++ ) {
-			for ( int i = f( row ); i < ( f( row ) + TINY_N ); i++ ) {
-			ASSERT( ( i <= row+SMALL_N ), i,"wrong i_row in [][]" );
-				for ( int j = f( col ); j < ( f( col ) + TINY_N ); j++ ) {
-					ASSERT( (j <= col+SMALL_N),i, "wrong j_col in [][]" );
-					if (numbers[col+1] == 1) // we've already set 
-						return 0;
-					else 
-						numbers[sudoku[i][j].field] = 1; // dictact that we've this row has this field already 
-				}
-			}
-		}
-	}
-
-	return 1;
-*/
 }
 
 void FILL(unsigned row, unsigned col,unsigned field){
 // set a field with a value
 	sudoku[ row ][ col ].field 		= field;
 	sudoku[ row ][ col ].option_count 	= 0;
+	
+	for ( int n = 1; n <= SMALL_N; n++ ) 
+		sudoku[ row ][ col ].can_be[n] = 0;
+		
+	sudoku[ row ][ col ].can_be[field] = 1;
+	int z = 0;	
 }
 
 
@@ -248,7 +245,7 @@ unsigned horiz_vert( row_col_anal row_or_col )
 		for ( int col = 0; col < SMALL_N; col++ ) {
 			struct_board_tp& SRC =  sudoku[ row ][ col ];
 			if ( SRC.field ) {	// there is a number
-				ASSERT( ( SRC.option_count == 0 ),SRC.option_count, " has # + option?" );
+				//ASSERT( ( SRC.option_count == 0 ),SRC.option_count, " has # + option?" );
 			}else{
 				// field is EMPTY. Goal to count down options to 1
 				ASSERT( ( SRC.option_count ),SRC.option_count,"0 field must have opt" );
@@ -269,8 +266,10 @@ unsigned horiz_vert( row_col_anal row_or_col )
 						// plug in only 1 of BIG_N numbers
 						// and set option_count to 0
 						field = find_1_field( row, col );
-						FILL(row,col,field);
-						changes++;
+						if ( valid_move(row,col,field)) {
+							FILL(row,col,field);
+							changes++;
+						} //end if
 					} //end if
 				} //end for i
 			   } //end if
@@ -295,7 +294,7 @@ unsigned subsquare( )
 		for ( int col = 0; col < SMALL_N; col++ ) {
 			struct_board_tp& SRC =  sudoku[ row ][ col ];
 			if ( SRC.field ) {	// there is a number
-				ASSERT( ( SRC.option_count == 0 ),SRC.option_count, "has # + option?" );
+				//ASSERT( ( SRC.option_count == 0 ),SRC.option_count, "has # + option?" );
 			}else{
 				// field is EMPTY. Goal to count down options to 1jj
 				ASSERT( ( SRC.option_count ),SRC.option_count, "subsquare must have opt" );
@@ -310,12 +309,14 @@ unsigned subsquare( )
 							SRC.can_be[ field ] = FALSE;
 						} //end if
 						SRC.option_count = options = count_fields( row, col );
-						if ( options == 1 ) {
+						if ( options == 1) {
 							// plug in only 1 of SMALL_N numbers
 							// and set option_count to 0
 							field = find_1_field( row, col );
-							FILL(row,col,field);
-							changes++;
+							if(valid_move(row,col,field)) {
+								FILL(row,col,field);
+								changes++;
+							}
 						} //end if
 					} //end for j
 				} //end for i
@@ -360,34 +361,47 @@ int solved_at_level = 0; // used to determine what level board was solved at
 //    -- recurse 
 //    -- IF a solution works, return
 //    -- ELSE backtrack, ie set the field back to the state prior to the recursive call
-unsigned sudoku_level1()
+
+struct_board_tp temp[SMALL_N][SMALL_N] ;
+
+bool find_unassigned(int &row, int &col)
+{
+    for (row = 0; row < SMALL_N; row++)
+        for (col = 0; col < SMALL_N; col++)
+            if (sudoku[row][col].field == 0)
+                return true;
+    return false;
+}
+
+//unsigned sudoku_level1(int r, int c, int try_option=0)
+unsigned sudoku_level1(int try_option=0)
 { //sudoku_level1
-	int changes = sudoku_level0();
-	if (sanity_check())
-		return changes;
+
+	int row,col;
 	
+	if (0 == solved_at_level){
+		int changes = sudoku_level0();
+	}
+	
+	if (!find_unassigned(row,col))
+			return 1;
+
 	solved_at_level = 1;
-	
-	// search for fields w/ n options, try them out using back tracking
-       	for ( int row = 0; row < SMALL_N; row++ ) {
-               	for ( int col = 0; col < SMALL_N; col++ ) {
-                       	if(sudoku[ row ][ col ].option_count == 2){
-               			for ( int j = 1; j <= SMALL_N; j++ ) {
-                       			if(sudoku[ row ][ col ].can_be[j] == TRUE){
-						FILL(row,col,j);
-						return sudoku_level1();	// recurse
-						if(!sanity_check()){    // backtrack
-                       					sudoku[ row ][ col ].option_count = 2;
-                       					sudoku[ row ][ col ].field = 0;
-						}
-					}
-				}
+		
+
+	for (int field = 1;field <= SMALL_N;field++){
+		if (0 == sudoku[row][col].can_be[field]) continue;
+
+		if (sudoku[row][col].can_be[field]){
+			if (valid_move(row,col,field)){
+                      		sudoku[ row ][ col ].field = field ;
+				if(sudoku_level1(field))
+					return 1;
+                       		sudoku[ row ][ col ].field = 0 ;
 			}
 		}
 	}
-
-	return changes;
-
+	return 0;
 } //end sudoku_level1
 
 
@@ -494,7 +508,6 @@ void print_board(){
 	std::cout << std::endl;
 }
 
-
 int main()
 {
 	init_board(); // initialize
@@ -511,6 +524,7 @@ int main()
 	std::cout << "Fields filled: " << 81-cnt << std::endl;
 	std::cout << "Fields Empty: " << cnt << std::endl << std::endl;
 
+	//sudoku_level1(0,0); // solve board
 	sudoku_level1(); // solve board
 	print_board();
 
@@ -521,4 +535,79 @@ int main()
 	}
   	return 0;
 }
+
+
+/***
+wrong idea. 
+
+
+unsigned sudoku_level1zz(int r, int c, int try_option=0)
+{ //sudoku_level1
+	if (sanity_check())
+			return 1;
+		
+	int changes = sudoku_level0();
+
+	if (sanity_check())
+			return 1;
+		
+	solved_at_level = 1;
+
+	print_board();
+	
+	// search for fields w/ n options, try them out using back tracking
+
+//sudoku[0][2].field = 9;
+//sudoku[0][2].option_count = 0;
+
+       	//for ( int options = 2; options < SMALL_N+1; options++ ) {
+       	for ( int options = 2; options < 5; options++ ) {
+       	//for ( int options = 2; options < 3; options++ ) {
+       		for ( int row = 0; row < SMALL_N; row++ ) {
+       		//for ( int row = r; row < SMALL_N; row++ ) {
+               		//for ( int col = c; col < SMALL_N; col++ ) {
+               		for ( int col = 0; col < SMALL_N; col++ ) {
+
+
+                       		if(0 != sudoku[ row ][ col ].field) continue;
+				
+				//int j = try_option;
+				int j = 1;
+                       		if((sudoku[ row ][ col ].option_count == options) || (sudoku[ row ][ col ].option_count == 1)){
+                       		//if(0 == sudoku[row][col].field){
+					int n = 1;
+					///int field = find_1_field( row, col );
+					//for (;n <= SMALL_N;n++){
+					for (int field = 1;field <= SMALL_N;field++){
+						//if (sudoku[row][col].can_be[field] == FALSE){
+						if (sudoku[row][col].can_be[field] == TRUE){
+							if (valid_move(row,col,field)){
+								memcpy(&temp,&sudoku,sizeof(sudoku));
+								FILL(row,col,field);
+								if(sudoku_level1zz(row,col,field))
+									return 1;
+							
+					//if( (is_board_filled() && !sanity_check()) || ((row == SMALL_N ) && (col == SMALL_N ))){    	// backtrack
+                       						temp[ row ][ col ].can_be[field] = FALSE;
+                       						temp[ row ][ col ].field = 0 ;
+								memcpy(&sudoku,&temp,sizeof(temp)); 		// change back to before the move
+								sudoku[ row ][ col ].option_count = count_fields( row, col );
+								//row = r;
+								//col = c;
+					//j = try_option++;
+				//}
+							}
+						}
+					}
+				}
+				
+			}
+		}
+		int z = 0; // not doing shit. added for breakpoint
+	}
+	return 0;
+
+} //end sudoku_level1
+
+*/
 

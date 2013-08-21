@@ -16,16 +16,55 @@ This program does the following:
 	as a level1 board. ie there are fields who have 
 	at most 2 viable possible values for its board
 
+Sample input:
+  0 1 2  3 4 5  6 7 8
++------+------+------+
+|     5|      | 9   1| 0
+|      | 5   2|      | 1
+|     1|     8| 7 5  | 2
++------+------+------+
+| 3    | 1 8  |   2  | 3
+| 5 8  |   6  |   1 7| 4
+|   7  |   2 5|     9| 5
++------+------+------+
+|   4 7| 2    | 1    | 6
+|      | 9   4|      | 7
+| 9   3|      | 2    | 8
++------+------+------+
 
 Output:
 1) Print the initial board with statistics about how my fields
 need solving. 
 2) Print solved board and display what level board was solved at.
 
+Sample:
+Statistics initially:
+Total # of fields: 81
+Fields filled:     31
+empty fields:      50
+
+Sudoku level 1 sudoku board.
+	  0 1 2  3 4 5  6 7 8
+	+------+------+------+
+	| 6 2 5| 7 4 3| 9 8 1| 0
+	| 7 9 8| 5 1 2| 6 3 4| 1
+	| 4 3 1| 6 9 8| 7 5 2| 2
+	+------+------+------+
+	| 3 6 9| 1 8 7| 4 2 5| 3
+	| 5 8 2| 4 6 9| 3 1 7| 4
+	| 1 7 4| 3 2 5| 8 6 9| 5
+	+------+------+------+
+	| 8 4 7| 2 5 6| 1 9 3| 6
+	| 2 1 6| 9 3 4| 5 7 8| 7
+	| 9 5 3| 8 7 1| 2 4 6| 8
+	+------+------+------+
+The board was solved with sudoku level 1
+
+
 !!! ***NOTE***  input files must have blank row at end of file !!!!
 
 to compile:  /> g++ sudoku.cpp
-to run:      /> a.out < graph-input-file.txt
+to run:      /> a.out < sudoku-input-file.txt
 *********************************************************************/
 
 #include <stdio.h>
@@ -126,7 +165,6 @@ int get_empty_count(){
 
 int valid_move(int row,int col,int set_field){
 // checks to see that all are set, ie have values
-
 	// determine numbers hasnt already set in row
 	for ( int c = 0,i=1; c < SMALL_N; c++,i++ ) {
 		if (set_field == sudoku[row][c].field){
@@ -344,7 +382,7 @@ unsigned sudoku_level0()
 				changes += subsquare();
 				++iterations;
 	} while ( changes );
-	//try_single_option();
+
 #	ifdef DEBUG
 				printf( "Iterated level0 %d times.\n", iterations );
 				errors = sanity_check();
@@ -535,79 +573,4 @@ int main()
 	}
   	return 0;
 }
-
-
-/***
-wrong idea. 
-
-
-unsigned sudoku_level1zz(int r, int c, int try_option=0)
-{ //sudoku_level1
-	if (sanity_check())
-			return 1;
-		
-	int changes = sudoku_level0();
-
-	if (sanity_check())
-			return 1;
-		
-	solved_at_level = 1;
-
-	print_board();
-	
-	// search for fields w/ n options, try them out using back tracking
-
-//sudoku[0][2].field = 9;
-//sudoku[0][2].option_count = 0;
-
-       	//for ( int options = 2; options < SMALL_N+1; options++ ) {
-       	for ( int options = 2; options < 5; options++ ) {
-       	//for ( int options = 2; options < 3; options++ ) {
-       		for ( int row = 0; row < SMALL_N; row++ ) {
-       		//for ( int row = r; row < SMALL_N; row++ ) {
-               		//for ( int col = c; col < SMALL_N; col++ ) {
-               		for ( int col = 0; col < SMALL_N; col++ ) {
-
-
-                       		if(0 != sudoku[ row ][ col ].field) continue;
-				
-				//int j = try_option;
-				int j = 1;
-                       		if((sudoku[ row ][ col ].option_count == options) || (sudoku[ row ][ col ].option_count == 1)){
-                       		//if(0 == sudoku[row][col].field){
-					int n = 1;
-					///int field = find_1_field( row, col );
-					//for (;n <= SMALL_N;n++){
-					for (int field = 1;field <= SMALL_N;field++){
-						//if (sudoku[row][col].can_be[field] == FALSE){
-						if (sudoku[row][col].can_be[field] == TRUE){
-							if (valid_move(row,col,field)){
-								memcpy(&temp,&sudoku,sizeof(sudoku));
-								FILL(row,col,field);
-								if(sudoku_level1zz(row,col,field))
-									return 1;
-							
-					//if( (is_board_filled() && !sanity_check()) || ((row == SMALL_N ) && (col == SMALL_N ))){    	// backtrack
-                       						temp[ row ][ col ].can_be[field] = FALSE;
-                       						temp[ row ][ col ].field = 0 ;
-								memcpy(&sudoku,&temp,sizeof(temp)); 		// change back to before the move
-								sudoku[ row ][ col ].option_count = count_fields( row, col );
-								//row = r;
-								//col = c;
-					//j = try_option++;
-				//}
-							}
-						}
-					}
-				}
-				
-			}
-		}
-		int z = 0; // not doing shit. added for breakpoint
-	}
-	return 0;
-
-} //end sudoku_level1
-
-*/
 

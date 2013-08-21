@@ -264,7 +264,6 @@ void FILL(unsigned row, unsigned col,unsigned field){
 		sudoku[ row ][ col ].can_be[n] = 0;
 		
 	sudoku[ row ][ col ].can_be[field] = 1;
-	int z = 0;	
 }
 
 
@@ -418,7 +417,7 @@ unsigned sudoku_level1(int try_option=0)
 	int row,col;
 	
 	if (0 == solved_at_level){
-		int changes = sudoku_level0();
+		sudoku_level0();
 	}
 	
 	if (!find_unassigned(row,col))
@@ -503,8 +502,6 @@ void read_board(){
 // read board from stdin line at a time
 
 	char str[60];	
-	int a,b;
-	bool go = false;
 
 	fgets(str,60,stdin);
 	fgets(str,60,stdin);

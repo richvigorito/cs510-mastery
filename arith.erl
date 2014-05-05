@@ -1,6 +1,7 @@
 -module(arith).
 -export([incr/1]).
 -export([decr/1]).
+-export([fact/1]).
 -export([add/2]).
 -export([sub/2]).
 -export([mult/2]).
@@ -18,6 +19,9 @@
 
 incr(A) -> A + 1.
 decr(A) -> A - 1.
+
+fact(0) -> 1;
+fact(N) -> N * fact(decr(N)).
 
 add(A,0) -> A;
 add(A,B) when B < 0 -> add(decr(A),incr(B));
